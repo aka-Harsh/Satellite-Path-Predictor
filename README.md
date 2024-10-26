@@ -16,6 +16,8 @@
 ## Video Demo
 🎥 Here you can find a video of the working project.
 
+https://github.com/user-attachments/assets/df90ac49-e3ec-4d44-bd28-e003edceef3c
+
 
 ## Deployment
 
