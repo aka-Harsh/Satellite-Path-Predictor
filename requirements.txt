@@ -1,0 +1,7 @@
+numpy
+pandas
+tensorflow
+sgp4
+flask
+scikit-learn
+matplotlib
