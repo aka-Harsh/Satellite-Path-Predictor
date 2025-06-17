@@ -1,7 +1,45 @@
-numpy
-pandas
-tensorflow
-sgp4
-flask
-scikit-learn
-matplotlib
+# Core ML and Scientific Computing
+numpy==1.24.3
+pandas==2.0.3
+scikit-learn==1.3.0
+matplotlib==3.7.2
+
+# TensorFlow (use compatible version)
+tensorflow>=2.10.0,<2.14.0
+
+# Orbital Mechanics
+sgp4==2.22
+skyfield==1.46
+
+# Web Framework
+flask==2.3.3
+flask-cors==4.0.0
+
+# Optional: WebSocket support (uncomment if needed)
+# flask-socketio==5.3.6
+
+# Database and Caching
+redis==5.0.0
+
+# HTTP and API
+requests==2.31.0
+httpx==0.24.1
+aiohttp==3.8.5
+
+# Data Processing
+scipy==1.11.1
+
+# Optional: Astronomy library (uncomment if needed)
+# astropy==5.3.2
+
+# Utilities
+python-dateutil==2.8.2
+pytz==2023.3
+schedule==1.2.0
+
+# Development and Testing
+pytest==7.4.0
+python-dotenv==1.0.0
+
+# Image Processing (for enhanced Earth textures)
+Pillow==10.0.0
