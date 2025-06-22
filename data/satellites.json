@@ -1,0 +1,341 @@
+{
+  "popular_satellites": [
+    {
+      "name": "ISS (ZARYA)",
+      "norad_id": "25544",
+      "category": "Space Station",
+      "description": "International Space Station - a habitable artificial satellite in low Earth orbit",
+      "launch_date": "1998-11-20",
+      "country": "International",
+      "status": "Active",
+      "orbital_period": 93,
+      "altitude_range": {
+        "min": 408,
+        "max": 420
+      },
+      "inclination": 51.6,
+      "mass_kg": 420000,
+      "crew_capacity": 6,
+      "features": ["Crewed", "Research", "International Cooperation"]
+    },
+    {
+      "name": "HUBBLE SPACE TELESCOPE",
+      "norad_id": "20580",
+      "category": "Space Observatory",
+      "description": "Space telescope that has revolutionized astronomy since 1990",
+      "launch_date": "1990-04-24",
+      "country": "USA",
+      "status": "Active",
+      "orbital_period": 96,
+      "altitude_range": {
+        "min": 535,
+        "max": 545
+      },
+      "inclination": 28.5,
+      "mass_kg": 11110,
+      "features": ["Scientific", "Deep Space Observations", "UV/Visible/Near-IR"]
+    },
+    {
+      "name": "STARLINK-1007",
+      "norad_id": "44713",
+      "category": "Communication",
+      "description": "Part of SpaceX's Starlink constellation for global internet coverage",
+      "launch_date": "2019-11-11",
+      "country": "USA",
+      "status": "Active",
+      "orbital_period": 95,
+      "altitude_range": {
+        "min": 540,
+        "max": 570
+      },
+      "inclination": 53.0,
+      "mass_kg": 260,
+      "features": ["Internet Constellation", "Low Latency", "Global Coverage"]
+    },
+    {
+      "name": "NOAA 18",
+      "norad_id": "28654",
+      "category": "Weather",
+      "description": "Polar-orbiting weather satellite providing global atmospheric data",
+      "launch_date": "2005-05-20",
+      "country": "USA",
+      "status": "Active",
+      "orbital_period": 102,
+      "altitude_range": {
+        "min": 850,
+        "max": 870
+      },
+      "inclination": 99.2,
+      "mass_kg": 1457,
+      "features": ["Weather Monitoring", "Climate Research", "Polar Orbit"]
+    },
+    {
+      "name": "GPS BIIR-2",
+      "norad_id": "26360",
+      "category": "Navigation",
+      "description": "GPS satellite providing global positioning and timing services",
+      "launch_date": "2000-05-11",
+      "country": "USA",
+      "status": "Active",
+      "orbital_period": 718,
+      "altitude_range": {
+        "min": 20180,
+        "max": 20200
+      },
+      "inclination": 55.0,
+      "mass_kg": 2032,
+      "features": ["Global Navigation", "Precision Timing", "Military/Civilian Use"]
+    },
+    {
+      "name": "TERRA",
+      "norad_id": "25994",
+      "category": "Earth Observation",
+      "description": "NASA Earth observation satellite studying climate and environment",
+      "launch_date": "1999-12-18",
+      "country": "USA",
+      "status": "Active",
+      "orbital_period": 99,
+      "altitude_range": {
+        "min": 705,
+        "max": 705
+      },
+      "inclination": 98.2,
+      "mass_kg": 5190,
+      "features": ["Climate Monitoring", "Land Use", "Atmosphere Studies"]
+    },
+    {
+      "name": "GOES 16",
+      "norad_id": "41866",
+      "category": "Weather",
+      "description": "Geostationary weather satellite covering the Americas",
+      "launch_date": "2016-11-19",
+      "country": "USA",
+      "status": "Active",
+      "orbital_period": 1436,
+      "altitude_range": {
+        "min": 35786,
+        "max": 35786
+      },
+      "inclination": 0.1,
+      "mass_kg": 5192,
+      "features": ["Geostationary", "Weather Imaging", "Lightning Detection"]
+    },
+    {
+      "name": "SENTINEL-1A",
+      "norad_id": "39634",
+      "category": "Earth Observation",
+      "description": "European radar imaging satellite for land and ocean monitoring",
+      "launch_date": "2014-04-03",
+      "country": "ESA",
+      "status": "Active",
+      "orbital_period": 99,
+      "altitude_range": {
+        "min": 693,
+        "max": 693
+      },
+      "inclination": 98.2,
+      "mass_kg": 2300,
+      "features": ["SAR Imaging", "All-Weather", "Environmental Monitoring"]
+    }
+  ],
+  "categories": {
+    "Space Stations": {
+      "description": "Large spacecraft supporting human crews in orbit",
+      "typical_altitude": "400-450 km",
+      "examples": ["ISS", "Tiangong", "Mir (historical)"]
+    },
+    "Communication": {
+      "description": "Satellites providing telecommunications, internet, and broadcasting services",
+      "typical_altitude": "35,786 km (GEO) or 550-1,200 km (LEO)",
+      "examples": ["Starlink", "OneWeb", "Intelsat"]
+    },
+    "Weather": {
+      "description": "Satellites monitoring Earth's weather patterns and climate",
+      "typical_altitude": "850 km (polar) or 35,786 km (geostationary)",
+      "examples": ["NOAA series", "GOES series", "MetOp"]
+    },
+    "Navigation": {
+      "description": "Global positioning and timing satellites",
+      "typical_altitude": "20,200 km",
+      "examples": ["GPS", "GLONASS", "Galileo", "BeiDou"]
+    },
+    "Earth Observation": {
+      "description": "Satellites monitoring Earth's land, oceans, and atmosphere",
+      "typical_altitude": "500-800 km",
+      "examples": ["Landsat", "Sentinel", "Terra", "MODIS"]
+    },
+    "Space Observatory": {
+      "description": "Telescopes and instruments observing space and celestial objects",
+      "typical_altitude": "Various (LEO to deep space)",
+      "examples": ["Hubble", "James Webb", "Chandra", "Spitzer"]
+    },
+    "Military": {
+      "description": "Defense and intelligence satellites",
+      "typical_altitude": "Various",
+      "examples": ["KH series", "NROL missions", "Early warning satellites"]
+    },
+    "Scientific": {
+      "description": "Research satellites for various scientific purposes",
+      "typical_altitude": "Various",
+      "examples": ["Parker Solar Probe", "Van Allen Probes", "GRACE"]
+    }
+  },
+  "orbital_regimes": {
+    "LEO": {
+      "name": "Low Earth Orbit",
+      "altitude_range": "160-2000 km",
+      "orbital_period": "90-130 minutes",
+      "characteristics": ["Short orbital periods", "Require frequent updates", "Good for Earth observation"]
+    },
+    "MEO": {
+      "name": "Medium Earth Orbit",
+      "altitude_range": "2000-35,786 km",
+      "orbital_period": "2-12 hours",
+      "characteristics": ["Navigation satellites", "Some communication satellites", "Regional coverage"]
+    },
+    "GEO": {
+      "name": "Geostationary Earth Orbit",
+      "altitude_range": "35,786 km",
+      "orbital_period": "24 hours",
+      "characteristics": ["Appears stationary from Earth", "Weather and communication satellites", "Equatorial orbit"]
+    },
+    "HEO": {
+      "name": "High Earth Orbit",
+      "altitude_range": ">35,786 km",
+      "orbital_period": ">24 hours",
+      "characteristics": ["Deep space missions", "Lagrange point orbits", "Highly elliptical orbits"]
+    }
+  },
+  "launch_sites": {
+    "Kennedy Space Center": {
+      "country": "USA",
+      "latitude": 28.573,
+      "longitude": -80.648,
+      "active": true
+    },
+    "Baikonur Cosmodrome": {
+      "country": "Kazakhstan",
+      "latitude": 45.920,
+      "longitude": 63.342,
+      "active": true
+    },
+    "Kourou": {
+      "country": "French Guiana",
+      "latitude": 5.236,
+      "longitude": -52.768,
+      "active": true
+    },
+    "Vandenberg Space Force Base": {
+      "country": "USA",
+      "latitude": 34.632,
+      "longitude": -120.611,
+      "active": true
+    },
+    "Jiuquan": {
+      "country": "China",
+      "latitude": 40.958,
+      "longitude": 100.291,
+      "active": true
+    },
+    "Tanegashima": {
+      "country": "Japan",
+      "latitude": 30.391,
+      "longitude": 130.969,
+      "active": true
+    }
+  },
+  "agencies": {
+    "NASA": {
+      "name": "National Aeronautics and Space Administration",
+      "country": "USA",
+      "founded": 1958,
+      "website": "https://www.nasa.gov"
+    },
+    "ESA": {
+      "name": "European Space Agency",
+      "country": "Europe",
+      "founded": 1975,
+      "website": "https://www.esa.int"
+    },
+    "ROSCOSMOS": {
+      "name": "Russian Space Agency",
+      "country": "Russia",
+      "founded": 1992,
+      "website": "https://www.roscosmos.ru"
+    },
+    "CNSA": {
+      "name": "China National Space Administration",
+      "country": "China",
+      "founded": 1993,
+      "website": "http://www.cnsa.gov.cn"
+    },
+    "ISRO": {
+      "name": "Indian Space Research Organisation",
+      "country": "India",
+      "founded": 1969,
+      "website": "https://www.isro.gov.in"
+    },
+    "JAXA": {
+      "name": "Japan Aerospace Exploration Agency",
+      "country": "Japan",
+      "founded": 2003,
+      "website": "https://www.jaxa.jp"
+    },
+    "SpaceX": {
+      "name": "Space Exploration Technologies Corp.",
+      "country": "USA",
+      "founded": 2002,
+      "website": "https://www.spacex.com"
+    }
+  },
+  "tle_sources": {
+    "celestrak": {
+      "name": "CelesTrak",
+      "url": "https://celestrak.org",
+      "description": "Comprehensive TLE data source",
+      "update_frequency": "Multiple times daily",
+      "free": true
+    },
+    "spacetrack": {
+      "name": "Space-Track.org",
+      "url": "https://www.space-track.org",
+      "description": "Official US military satellite tracking data",
+      "update_frequency": "Real-time",
+      "free": true,
+      "requires_registration": true
+    },
+    "n2yo": {
+      "name": "N2YO",
+      "url": "https://www.n2yo.com",
+      "description": "Real-time satellite tracking",
+      "update_frequency": "Real-time",
+      "free": "Limited"
+    }
+  },
+  "prediction_models": {
+    "sgp4": {
+      "name": "Simplified General Perturbations 4",
+      "description": "Standard model for satellite orbit propagation",
+      "accuracy": "Good for short-term predictions (days)",
+      "limitations": "Degrades over time, atmospheric drag effects"
+    },
+    "lstm": {
+      "name": "Long Short-Term Memory Neural Network",
+      "description": "Machine learning approach for trajectory prediction",
+      "accuracy": "Can improve on SGP4 for certain satellites",
+      "limitations": "Requires training data, black box"
+    },
+    "hybrid": {
+      "name": "SGP4 + LSTM Ensemble",
+      "description": "Combines physics-based and ML approaches",
+      "accuracy": "Best overall performance",
+      "limitations": "Computational complexity"
+    }
+  },
+  "data_sources": {
+    "tle_update_frequency": "6 hours",
+    "cache_duration": "30 minutes",
+    "prediction_cache": "15 minutes",
+    "last_updated": "2024-01-01T00:00:00Z"
+  }
+}
