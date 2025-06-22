@@ -1,172 +1,1088 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Satellite Trajectory Prediction</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbital Tracker - Advanced Satellite Path Predictor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { 
-            font-family: Arial, sans-serif; 
-            max-width: 1000px; 
-            margin: 0 auto; 
-            padding: 20px; 
-            background-color: #f5f5f5;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --warning-color: #f59e0b;
+            --dark-bg: #0f172a;
+            --dark-surface: #1e293b;
+            --dark-elevated: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --glass-bg: rgba(30, 41, 59, 0.8);
+            --glass-border: rgba(148, 163, 184, 0.1);
         }
-        .form-group { 
-            margin-bottom: 15px; 
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+
+        /* Animated background stars */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
-        textarea { 
-            width: 100%; 
-            height: 60px; 
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: monospace;
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite alternate;
         }
-        button { 
-            padding: 10px 20px; 
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 4px;
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .theme-toggle {
+            background: var(--dark-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
             cursor: pointer;
-            font-size: 16px;
+            transition: all 0.3s ease;
         }
-        .secondary-button {
-            background-color: #6c757d;
-            margin-right: 10px;
+
+        .theme-toggle:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
         }
-        .secondary-button:hover {
-            background-color: #5a6268;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .results-section {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            background-color: #fff;
-        }
-        .metrics-grid {
+
+        /* Main Layout */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            margin-top: 15px;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            min-height: calc(100vh - 120px);
         }
+
+        /* Visualization Panel */
+        .visualization-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .viz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .viz-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .viz-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .control-btn {
+            background: var(--dark-elevated);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            background: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: var(--primary-color);
+        }
+
+        #three-container {
+            width: 100%;
+            height: 500px;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            background: radial-gradient(circle, #1a1a2e 0%, #0f0f1a 100%);
+        }
+
+        .time-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--dark-elevated);
+            border-radius: 0.5rem;
+        }
+
+        .time-slider {
+            flex: 1;
+            -webkit-appearance: none;
+            appearance: none;
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            outline: none;
+        }
+
+        .time-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* Control Panel */
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .panel-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .panel-section:hover {
+            border-color: var(--primary-color);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.1);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .section-header i {
+            font-size: 1.25rem;
+        }
+
+        /* Search Section */
+        .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--dark-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .satellite-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 0.5rem;
+        }
+
+        .satellite-item {
+            padding: 0.75rem;
+            background: var(--dark-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .satellite-item:hover {
+            background: var(--primary-color);
+            transform: translateX(4px);
+        }
+
+        .satellite-item.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .satellite-name {
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .satellite-status {
+            font-size: 0.8rem;
+            color: var(--success-color);
+        }
+
+        /* TLE Input Section */
+        .tle-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--dark-elevated);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            resize: vertical;
+            min-height: 60px;
+            transition: all 0.3s ease;
+        }
+
+        .tle-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .tle-validation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .validation-status {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .validation-status.valid {
+            color: var(--success-color);
+        }
+
+        .validation-status.invalid {
+            color: var(--error-color);
+        }
+
+        .char-count {
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--dark-elevated);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+            transform: translateY(-2px);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Results Section */
+        .results-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
         .metric-card {
-            padding: 15px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border: 1px solid #dee2e6;
-        }
-        .visualization {
-            margin-top: 20px;
+            background: var(--dark-elevated);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border-color);
             text-align: center;
         }
-        .error {
-            color: #dc3545;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid #dc3545;
-            border-radius: 4px;
-            background-color: #f8d7da;
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 0.25rem;
         }
-        .hint {
-            font-size: 0.8em;
-            color: #666;
-            margin-top: 4px;
+
+        .metric-label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .character-count {
-            font-size: 0.8em;
-            color: #666;
-            margin-top: 4px;
-            text-align: right;
+
+        /* Live Status */
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--dark-elevated);
+            border-radius: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error/Success Messages */
+        .alert {
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .control-panel {
+                order: -1;
+            }
+            
+            #three-container {
+                height: 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                padding: 0 1rem;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+
+        /* Hide scrollbar for satellite list */
+        .satellite-list::-webkit-scrollbar {
+            width: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Satellite Trajectory Prediction After 24 Hours</h1>
-        
-        <div class="form-group">
-            <label>TLE Line 1:</label>
-            <textarea id="line1" placeholder="Enter first line of TLE data..."></textarea>
-            <div class="hint">Must be exactly 69 characters starting with '1 '</div>
-            <div class="character-count">Characters: 0/69</div>
+    <div class="stars" id="stars"></div>
+    
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fas fa-satellite"></i>
+                <span>Orbital Tracker</span>
+            </div>
+            <div class="live-status">
+                <div class="status-indicator"></div>
+                <span>Live Tracking</span>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <label>TLE Line 2:</label>
-            <textarea id="line2" placeholder="Enter second line of TLE data..."></textarea>
-            <div class="hint">Must be exactly 69 characters starting with '2 '</div>
-            <div class="character-count">Characters: 0/69</div>
+    </header>
+
+    <div class="main-container">
+        <div class="visualization-panel">
+            <div class="viz-header">
+                <div class="viz-title">
+                    <i class="fas fa-globe"></i>
+                    3D Orbital Visualization
+                </div>
+                <div class="viz-controls">
+                    <button class="control-btn" id="play-pause" title="Play/Pause">
+                        <i class="fas fa-play"></i>
+                    </button>
+                    <button class="control-btn" id="reset-view" title="Reset View">
+                        <i class="fas fa-sync"></i>
+                    </button>
+                    <button class="control-btn" id="fullscreen" title="Fullscreen">
+                        <i class="fas fa-expand"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="three-container"></div>
+            
+            <div class="time-controls">
+                <span id="time-label">Current Time</span>
+                <input type="range" class="time-slider" id="time-slider" min="0" max="100" value="0">
+                <span id="prediction-time">+24h</span>
+            </div>
         </div>
-        
-        <div class="form-group">
-            <button onclick="fillSampleTLE()" class="secondary-button">Fill Sample TLE Data</button>
-            <button onclick="predict()">Predict Trajectory</button>
-        </div>
-        
-        <div class="results-section" id="result" style="display: none;">
-            <h2>Prediction Results</h2>
-            <div id="prediction-results"></div>
-        </div>
-        
-        <div class="results-section" id="metrics-section" style="display: none;">
-            <h2>Evaluation Metrics</h2>
-            <div class="metrics-grid" id="metrics"></div>
-        </div>
-        
-        <div class="visualization" id="visualization" style="display: none;">
-            <h2>Trajectory Visualization</h2>
-            <img id="trajectory-plot" style="max-width: 100%; height: auto;">
+
+        <div class="control-panel">
+            <!-- Satellite Search -->
+            <div class="panel-section">
+                <div class="section-header">
+                    <i class="fas fa-search"></i>
+                    Popular Satellites
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="satellite-search" placeholder="Search satellites...">
+                    <i class="fas fa-search search-icon"></i>
+                </div>
+                <div class="satellite-list" id="satellite-list">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- TLE Input -->
+            <div class="panel-section">
+                <div class="section-header">
+                    <i class="fas fa-code"></i>
+                    TLE Data Input
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">TLE Line 1:</label>
+                    <textarea class="tle-input" id="tle-line1" placeholder="Enter first line of TLE data..."></textarea>
+                    <div class="tle-validation">
+                        <div class="validation-status" id="line1-validation">
+                            <i class="fas fa-circle"></i>
+                            <span>Ready</span>
+                        </div>
+                        <div class="char-count" id="line1-count">0/69</div>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label style="display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);">TLE Line 2:</label>
+                    <textarea class="tle-input" id="tle-line2" placeholder="Enter second line of TLE data..."></textarea>
+                    <div class="tle-validation">
+                        <div class="validation-status" id="line2-validation">
+                            <i class="fas fa-circle"></i>
+                            <span>Ready</span>
+                        </div>
+                        <div class="char-count" id="line2-count">0/69</div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn btn-secondary" id="sample-tle" style="flex: 1;">
+                        <i class="fas fa-magic"></i>
+                        Sample TLE
+                    </button>
+                    <button class="btn btn-primary" id="predict-btn" style="flex: 2;">
+                        <i class="fas fa-rocket"></i>
+                        Predict Trajectory
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="panel-section" id="results-section" style="display: none;">
+                <div class="section-header">
+                    <i class="fas fa-chart-line"></i>
+                    Prediction Results
+                </div>
+                <div id="results-content"></div>
+            </div>
+
+            <!-- Accuracy Metrics -->
+            <div class="panel-section" id="metrics-section" style="display: none;">
+                <div class="section-header">
+                    <i class="fas fa-bullseye"></i>
+                    Accuracy Metrics
+                </div>
+                <div class="results-grid" id="metrics-grid"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Update character count on input
-        document.getElementById('line1').addEventListener('input', function() {
-            updateCharCount(this, 'line1');
-        });
-        document.getElementById('line2').addEventListener('input', function() {
-            updateCharCount(this, 'line2');
+        // Popular satellites database
+        const popularSatellites = [
+            {
+                name: "ISS (ZARYA)",
+                noradId: "25544",
+                line1: "1 25544U 98067A   24025.19796491  .00016177  00000+0  30074-3 0  9995",
+                line2: "2 25544  51.6416 190.3403 0005496 213.9941 296.5960 15.49564479435062",
+                category: "Space Station"
+            },
+            {
+                name: "HUBBLE SPACE TELESCOPE",
+                noradId: "20580",
+                line1: "1 20580U 90037B   24025.41227564  .00001449  00000+0  83152-4 0  9991",
+                line2: "2 20580  28.4696 325.8944 0002639 321.4817  38.5721 15.09399711 50887",
+                category: "Space Observatory"
+            },
+            {
+                name: "STARLINK-1007",
+                noradId: "44713",
+                line1: "1 44713U 19074A   24025.45833333  .00002182  00000+0  16154-3 0  9993",
+                line2: "2 44713  53.0535 205.4499 0001452 275.6211  84.4497 15.06418295246811",
+                category: "Communication"
+            },
+            {
+                name: "NOAA 18",
+                noradId: "28654",
+                line1: "1 28654U 05018A   24025.55468750  .00000201  00000+0  12444-3 0  9992",
+                line2: "2 28654  99.0495 344.7868 0013423 280.3687  79.5711 14.12501276968434",
+                category: "Weather"
+            },
+            {
+                name: "GPS BIIR-2",
+                noradId: "26360",
+                line1: "1 26360U 00025A   24025.33333333  .00000017  00000+0  00000+0 0  9994",
+                line2: "2 26360  55.5445 186.0934 0194829 241.4061 116.1249  2.00564993175584",
+                category: "Navigation"
+            }
+        ];
+
+        // Global variables
+        let scene, camera, renderer, earth, satellites = [], animationId;
+        let isAnimating = false;
+        let currentSatellite = null;
+        let predictionData = null;
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            populateSatelliteList();
+            setupEventListeners();
+            initThreeJS();
+            animate();
         });
 
-        function updateCharCount(textarea, lineId) {
-            let count = textarea.value.length;
-            let parentDiv = textarea.parentNode;
-            let countDisplay = parentDiv.querySelector('.character-count');
-            countDisplay.textContent = `Characters: ${count}/69`;
+        // Create animated stars background
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 100;
             
-            if (count === 69) {
-                countDisplay.style.color = '#28a745';
-            } else {
-                countDisplay.style.color = '#666';
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+                starsContainer.appendChild(star);
             }
         }
 
-        function fillSampleTLE() {
-            document.getElementById('line1').value = '1 25544U 98067A   24025.19796491  .00016177  00000+0  30074-3 0  9995';
-            document.getElementById('line2').value = '2 25544  51.6416 190.3403 0005496 213.9941 296.5960 15.49564479435062';
-            updateCharCount(document.getElementById('line1'), 'line1');
-            updateCharCount(document.getElementById('line2'), 'line2');
+        // Populate satellite list
+        function populateSatelliteList() {
+            const satelliteList = document.getElementById('satellite-list');
+            
+            popularSatellites.forEach(satellite => {
+                const item = document.createElement('div');
+                item.className = 'satellite-item';
+                item.innerHTML = `
+                    <div>
+                        <div class="satellite-name">${satellite.name}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">${satellite.category}</div>
+                    </div>
+                    <div class="satellite-status">
+                        <i class="fas fa-circle" style="font-size: 0.6rem;"></i>
+                        Active
+                    </div>
+                `;
+                
+                item.addEventListener('click', () => {
+                    selectSatellite(satellite);
+                    document.querySelectorAll('.satellite-item').forEach(el => el.classList.remove('active'));
+                    item.classList.add('active');
+                });
+                
+                satelliteList.appendChild(item);
+            });
         }
 
-        async function predict() {
-            const line1 = document.getElementById('line1').value;
-            const line2 = document.getElementById('line2').value;
+        // Select satellite and populate TLE fields
+        function selectSatellite(satellite) {
+            document.getElementById('tle-line1').value = satellite.line1;
+            document.getElementById('tle-line2').value = satellite.line2;
+            currentSatellite = satellite;
             
+            updateTLEValidation('line1', satellite.line1);
+            updateTLEValidation('line2', satellite.line2);
+            
+            // Auto-predict for selected satellite
+            setTimeout(() => {
+                predictTrajectory();
+            }, 500);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // TLE input validation
+            document.getElementById('tle-line1').addEventListener('input', function() {
+                updateTLEValidation('line1', this.value);
+            });
+            
+            document.getElementById('tle-line2').addEventListener('input', function() {
+                updateTLEValidation('line2', this.value);
+            });
+
+            // Buttons
+            document.getElementById('sample-tle').addEventListener('click', () => {
+                selectSatellite(popularSatellites[0]);
+            });
+            
+            document.getElementById('predict-btn').addEventListener('click', predictTrajectory);
+            
+            // Visualization controls
+            document.getElementById('play-pause').addEventListener('click', toggleAnimation);
+            document.getElementById('reset-view').addEventListener('click', resetView);
+            document.getElementById('fullscreen').addEventListener('click', toggleFullscreen);
+            
+            // Search functionality
+            document.getElementById('satellite-search').addEventListener('input', function() {
+                filterSatellites(this.value);
+            });
+        }
+
+        // Update TLE validation
+        function updateTLEValidation(lineId, value) {
+            const validationEl = document.getElementById(`${lineId}-validation`);
+            const countEl = document.getElementById(`${lineId}-count`);
+            const length = value.length;
+            
+            countEl.textContent = `${length}/69`;
+            
+            if (length === 0) {
+                validationEl.className = 'validation-status';
+                validationEl.innerHTML = '<i class="fas fa-circle"></i><span>Ready</span>';
+            } else if (length === 69) {
+                const isValid = lineId === 'line1' ? value.startsWith('1 ') : value.startsWith('2 ');
+                if (isValid) {
+                    validationEl.className = 'validation-status valid';
+                    validationEl.innerHTML = '<i class="fas fa-check-circle"></i><span>Valid</span>';
+                } else {
+                    validationEl.className = 'validation-status invalid';
+                    validationEl.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Invalid Format</span>';
+                }
+            } else {
+                validationEl.className = 'validation-status invalid';
+                validationEl.innerHTML = '<i class="fas fa-exclamation-circle"></i><span>Invalid Length</span>';
+            }
+        }
+
+        // Filter satellites based on search
+        function filterSatellites(searchTerm) {
+            const items = document.querySelectorAll('.satellite-item');
+            const term = searchTerm.toLowerCase();
+            
+            items.forEach(item => {
+                const name = item.querySelector('.satellite-name').textContent.toLowerCase();
+                const category = item.querySelector('.satellite-name').nextElementSibling.textContent.toLowerCase();
+                
+                if (name.includes(term) || category.includes(term)) {
+                    item.style.display = 'flex';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize Three.js visualization
+        function initThreeJS() {
+            const container = document.getElementById('three-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000011);
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 100000);
+            camera.position.set(15000, 10000, 15000);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(width, height);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            container.appendChild(renderer.domElement);
+
+            // Earth
+            const earthGeometry = new THREE.SphereGeometry(6371, 64, 64);
+            // Create Earth with a simple blue/green texture
+            const earthMaterial = new THREE.MeshPhongMaterial({
+                color: 0x4a90e2,
+                shininess: 30,
+                transparent: true,
+                opacity: 0.9
+            });
+            
+            earth = new THREE.Mesh(earthGeometry, earthMaterial);
+            earth.castShadow = true;
+            earth.receiveShadow = true;
+            scene.add(earth);
+
+            // Add Earth atmosphere
+            const atmosphereGeometry = new THREE.SphereGeometry(6400, 64, 64);
+            const atmosphereMaterial = new THREE.MeshBasicMaterial({
+                color: 0x87ceeb,
+                transparent: true,
+                opacity: 0.1,
+                side: THREE.BackSide
+            });
+            const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+            scene.add(atmosphere);
+
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(50000, 50000, 50000);
+            directionalLight.castShadow = true;
+            directionalLight.shadow.mapSize.width = 2048;
+            directionalLight.shadow.mapSize.height = 2048;
+            scene.add(directionalLight);
+
+            // Stars background
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 2 });
+            
+            const starsVertices = [];
+            for (let i = 0; i < 10000; i++) {
+                const x = (Math.random() - 0.5) * 200000;
+                const y = (Math.random() - 0.5) * 200000;
+                const z = (Math.random() - 0.5) * 200000;
+                starsVertices.push(x, y, z);
+            }
+            
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            const starField = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(starField);
+
+            // Mouse controls
+            setupMouseControls();
+            
+            // Handle window resize
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // Setup mouse controls for camera
+        function setupMouseControls() {
+            let mouseDown = false;
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 15000;
+            let targetY = 10000;
+            let targetZ = 15000;
+
+            const container = document.getElementById('three-container');
+            
+            container.addEventListener('mousedown', (event) => {
+                mouseDown = true;
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+
+            container.addEventListener('mouseup', () => {
+                mouseDown = false;
+            });
+
+            container.addEventListener('mousemove', (event) => {
+                if (!mouseDown) return;
+
+                const deltaX = event.clientX - mouseX;
+                const deltaY = event.clientY - mouseY;
+
+                const spherical = new THREE.Spherical();
+                spherical.setFromVector3(camera.position);
+                
+                spherical.theta -= deltaX * 0.01;
+                spherical.phi += deltaY * 0.01;
+                spherical.phi = Math.max(0.1, Math.min(Math.PI - 0.1, spherical.phi));
+
+                camera.position.setFromSpherical(spherical);
+                camera.lookAt(0, 0, 0);
+
+                mouseX = event.clientX;
+                mouseY = event.clientY;
+            });
+
+            container.addEventListener('wheel', (event) => {
+                const distance = camera.position.length();
+                const newDistance = distance + event.deltaY * 50;
+                const clampedDistance = Math.max(8000, Math.min(50000, newDistance));
+                
+                camera.position.normalize().multiplyScalar(clampedDistance);
+                camera.lookAt(0, 0, 0);
+            });
+        }
+
+        // Handle window resize
+        function onWindowResize() {
+            const container = document.getElementById('three-container');
+            const width = container.clientWidth;
+            const height = container.clientHeight;
+
+            camera.aspect = width / height;
+            camera.updateProjectionMatrix();
+            renderer.setSize(width, height);
+        }
+
+        // Animation loop
+        function animate() {
+            animationId = requestAnimationFrame(animate);
+            
+            if (earth) {
+                earth.rotation.y += 0.001;
+            }
+            
+            // Update satellite positions if available
+            if (satellites.length > 0 && isAnimating) {
+                updateSatellitePositions();
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        // Update satellite positions
+        function updateSatellitePositions() {
+            const timeSlider = document.getElementById('time-slider');
+            const progress = parseFloat(timeSlider.value) / 100;
+            
+            satellites.forEach(satellite => {
+                if (satellite.trajectory && satellite.trajectory.length > 0) {
+                    const index = Math.floor(progress * (satellite.trajectory.length - 1));
+                    const position = satellite.trajectory[index];
+                    
+                    if (position) {
+                        satellite.mesh.position.set(position.x, position.y, position.z);
+                    }
+                }
+            });
+        }
+
+        // Toggle animation
+        function toggleAnimation() {
+            isAnimating = !isAnimating;
+            const button = document.getElementById('play-pause');
+            const icon = button.querySelector('i');
+            
+            if (isAnimating) {
+                icon.className = 'fas fa-pause';
+                button.title = 'Pause';
+            } else {
+                icon.className = 'fas fa-play';
+                button.title = 'Play';
+            }
+        }
+
+        // Reset camera view
+        function resetView() {
+            camera.position.set(15000, 10000, 15000);
+            camera.lookAt(0, 0, 0);
+        }
+
+        // Toggle fullscreen
+        function toggleFullscreen() {
+            const container = document.getElementById('three-container');
+            
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    console.log('Error attempting to enable fullscreen:', err);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // Predict trajectory
+        async function predictTrajectory() {
+            const line1 = document.getElementById('tle-line1').value.trim();
+            const line2 = document.getElementById('tle-line2').value.trim();
+            
+            if (!line1 || !line2) {
+                showAlert('Please enter both TLE lines', 'error');
+                return;
+            }
+
+            // Show loading state
+            const predictBtn = document.getElementById('predict-btn');
+            const originalText = predictBtn.innerHTML;
+            predictBtn.innerHTML = '<div class="loading"></div> Predicting...';
+            predictBtn.disabled = true;
+
             try {
                 const response = await fetch('/evaluate', {
                     method: 'POST',
@@ -175,53 +1091,179 @@
                     },
                     body: JSON.stringify({ line1, line2 })
                 });
-                
+
                 const data = await response.json();
+                
                 if (data.error) {
-                    showError(data.error);
+                    showAlert(data.error, 'error');
                 } else {
                     showResults(data);
+                    visualizeSatellite(data);
+                    showAlert('Trajectory prediction completed successfully!', 'success');
                 }
             } catch (error) {
-                showError(error.message);
+                showAlert('Network error: ' + error.message, 'error');
+            } finally {
+                predictBtn.innerHTML = originalText;
+                predictBtn.disabled = false;
             }
         }
-        
+
+        // Show results
         function showResults(data) {
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('prediction-results').innerHTML = `
-                <p><strong>Position (x, y, z):</strong> ${data.prediction.position.map(n => n.toFixed(3)).join(', ')} km</p>
-                <p><strong>Velocity (vx, vy, vz):</strong> ${data.prediction.velocity.map(n => n.toFixed(3)).join(', ')} km/s</p>
+            const resultsSection = document.getElementById('results-section');
+            const resultsContent = document.getElementById('results-content');
+            const metricsSection = document.getElementById('metrics-section');
+            const metricsGrid = document.getElementById('metrics-grid');
+
+            // Show prediction results
+            resultsContent.innerHTML = `
+                <div style="background: var(--dark-elevated); padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Position (km)</h4>
+                    <div style="font-family: monospace; font-size: 0.9rem;">
+                        X: ${data.prediction.position[0].toFixed(3)}<br>
+                        Y: ${data.prediction.position[1].toFixed(3)}<br>
+                        Z: ${data.prediction.position[2].toFixed(3)}
+                    </div>
+                </div>
+                <div style="background: var(--dark-elevated); padding: 1rem; border-radius: 0.5rem;">
+                    <h4 style="color: var(--primary-color); margin-bottom: 0.5rem;">Velocity (km/s)</h4>
+                    <div style="font-family: monospace; font-size: 0.9rem;">
+                        Vx: ${data.prediction.velocity[0].toFixed(3)}<br>
+                        Vy: ${data.prediction.velocity[1].toFixed(3)}<br>
+                        Vz: ${data.prediction.velocity[2].toFixed(3)}
+                    </div>
+                </div>
             `;
-            
-            document.getElementById('metrics-section').style.display = 'block';
-            document.getElementById('metrics').innerHTML = `
+
+            // Show accuracy metrics
+            metricsGrid.innerHTML = `
                 <div class="metric-card">
-                    <h3>Position Accuracy</h3>
-                    <p>RMSE: ${data.metrics.position_metrics.rmse.toFixed(3)} km</p>
-                    <p>MAE: ${data.metrics.position_metrics.mae.toFixed(3)} km</p>
-                    <p>MSE: ${data.metrics.position_metrics.mse.toFixed(3)} km²</p>
+                    <div class="metric-value">${data.metrics.position_metrics.rmse.toFixed(2)}</div>
+                    <div class="metric-label">Position RMSE (km)</div>
                 </div>
                 <div class="metric-card">
-                    <h3>Velocity Accuracy</h3>
-                    <p>RMSE: ${data.metrics.velocity_metrics.rmse.toFixed(3)} km/s</p>
-                    <p>MAE: ${data.metrics.velocity_metrics.mae.toFixed(3)} km/s</p>
-                    <p>MSE: ${data.metrics.velocity_metrics.mse.toFixed(3)} (km/s)²</p>
+                    <div class="metric-value">${data.metrics.position_metrics.mae.toFixed(2)}</div>
+                    <div class="metric-label">Position MAE (km)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${data.metrics.velocity_metrics.rmse.toFixed(4)}</div>
+                    <div class="metric-label">Velocity RMSE (km/s)</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${data.metrics.velocity_metrics.mae.toFixed(4)}</div>
+                    <div class="metric-label">Velocity MAE (km/s)</div>
                 </div>
             `;
+
+            resultsSection.style.display = 'block';
+            metricsSection.style.display = 'block';
             
-            document.getElementById('visualization').style.display = 'block';
-            document.getElementById('trajectory-plot').src = `data:image/png;base64,${data.plot}`;
+            predictionData = data;
         }
-        
-        function showError(message) {
-            document.getElementById('result').style.display = 'block';
-            document.getElementById('prediction-results').innerHTML = `
-                <div class="error">Error: ${message}</div>
+
+        // Visualize satellite in 3D
+        function visualizeSatellite(data) {
+            // Clear existing satellites
+            satellites.forEach(sat => {
+                scene.remove(sat.mesh);
+                if (sat.trail) scene.remove(sat.trail);
+            });
+            satellites = [];
+
+            // Create satellite mesh
+            const satelliteGeometry = new THREE.SphereGeometry(50, 16, 16);
+            const satelliteMaterial = new THREE.MeshBasicMaterial({ 
+                color: 0xff4444,
+                emissive: 0x441111
+            });
+            const satelliteMesh = new THREE.Mesh(satelliteGeometry, satelliteMaterial);
+
+            // Position satellite
+            const pos = data.prediction.position;
+            satelliteMesh.position.set(pos[0], pos[1], pos[2]);
+            scene.add(satelliteMesh);
+
+            // Create orbital trail
+            const trailGeometry = new THREE.BufferGeometry();
+            const trailPositions = [];
+            
+            // Generate orbital points (simplified circular orbit for demo)
+            const radius = Math.sqrt(pos[0]**2 + pos[1]**2 + pos[2]**2);
+            for (let i = 0; i <= 100; i++) {
+                const angle = (i / 100) * Math.PI * 2;
+                trailPositions.push(
+                    radius * Math.cos(angle),
+                    0,
+                    radius * Math.sin(angle)
+                );
+            }
+            
+            trailGeometry.setAttribute('position', new THREE.Float32BufferAttribute(trailPositions, 3));
+            const trailMaterial = new THREE.LineBasicMaterial({ 
+                color: 0x44ff44,
+                transparent: true,
+                opacity: 0.6
+            });
+            const trail = new THREE.Line(trailGeometry, trailMaterial);
+            scene.add(trail);
+
+            // Store satellite data
+            satellites.push({
+                mesh: satelliteMesh,
+                trail: trail,
+                trajectory: trailPositions,
+                data: data
+            });
+
+            // Focus camera on satellite
+            const distance = camera.position.length();
+            const direction = new THREE.Vector3(pos[0], pos[1], pos[2]).normalize();
+            camera.position.copy(direction.multiplyScalar(distance * 0.8));
+            camera.lookAt(pos[0], pos[1], pos[2]);
+        }
+
+        // Show alert messages
+        function showAlert(message, type) {
+            // Remove existing alerts
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            // Create new alert
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${message}</span>
             `;
-            document.getElementById('metrics-section').style.display = 'none';
-            document.getElementById('visualization').style.display = 'none';
+
+            // Insert at top of control panel
+            const controlPanel = document.querySelector('.control-panel');
+            controlPanel.insertBefore(alert, controlPanel.firstChild);
+
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
         }
+
+        // Real-time clock update
+        function updateClock() {
+            const now = new Date();
+            const timeLabel = document.getElementById('time-label');
+            if (timeLabel) {
+                timeLabel.textContent = now.toLocaleTimeString();
+            }
+        }
+
+        // Update clock every second
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Initialize with ISS data
+        setTimeout(() => {
+            selectSatellite(popularSatellites[0]);
+        }, 1000);
     </script>
 </body>
 </html>
