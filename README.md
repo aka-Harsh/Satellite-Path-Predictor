@@ -216,7 +216,15 @@ Open your browser and navigate to: **http://localhost:5000**
 ## Project Outlook
 
 ### New Enhanced Interface
-*[New screenshots to be added showcasing the 3D visualization and modern UI]*
+
+![Screenshot 2025-06-15 111146](https://github.com/user-attachments/assets/8c284af6-ae3b-4aad-ab33-b711fc145457)
+![Screenshot 2025-06-15 111336](https://github.com/user-attachments/assets/1e3f3542-80ff-4bd2-891d-4c7be55bb7f7)
+![Screenshot 2025-06-15 114620](https://github.com/user-attachments/assets/9a8c4527-4cf4-4831-a978-f2d6204b253c)
+
+![Screenshot 2025-06-14 232111](https://github.com/user-attachments/assets/3c4101f1-acd0-40e7-9c51-cc1fcc28ceda)
+
+
+
 
 ### Old Interface
 ![Screenshot 2024-10-26 153751](https://github.com/user-attachments/assets/76bb503b-f5f9-4ea5-a2c0-81323057c2c0)
