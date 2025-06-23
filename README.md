@@ -114,6 +114,10 @@ Open a web browser and go to http://localhost:5000
 - **Touch Gestures**: Mobile-optimized controls for 3D navigation
 
 ## Video Demo
+🎥 Here you can find a video of the updated project.
+
+https://github.com/user-attachments/assets/c366b006-5b6a-4b3d-ab6c-dd7adab93eb7
+
 🎥 Here you can find a video of the working project.
 
 https://github.com/user-attachments/assets/df90ac49-e3ec-4d44-bd28-e003edceef3c
